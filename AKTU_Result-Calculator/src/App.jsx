@@ -39,7 +39,8 @@ function App() {
           Enter marks, get SGPA and YGPA instantly, and keep your progress saved locally. <br /> <span className="text-gray-500">Maintained by</span>{" "}
           <a
             className="font-semibold text-primary-700 hover:text-primary-800 transition-colors duration-200"
-            href="https://github.com/SparshM8/"
+            href="https://github.com/SparshM8
+            "
             target="_blank"
             rel="noopener noreferrer"
           >
