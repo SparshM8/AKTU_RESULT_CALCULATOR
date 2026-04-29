@@ -31,7 +31,7 @@ function App() {
       <main className="max-w-7xl mx-auto">
         <div id="box1" className="flex flex-col justify-center items-center mb-8 sm:mb-12 mt-8">
         <p className="text-xs sm:text-sm uppercase tracking-[0.18em] text-gray-500 mb-3">2026 Session Friendly</p>
-        <h2 className="text-4xl sm:text-6xl font-display font-extrabold text-gray-900 mb-3 text-center px-2">
+        <h2 className="text-3xl sm:text-5xl font-display font-extrabold leading-tight text-gray-900 mb-3 text-center px-2 max-w-4xl">
           Result First. Friction Never.
         </h2>
         <div className="h-1 w-24 bg-primary-600 rounded-full mb-4"></div>
@@ -39,7 +39,7 @@ function App() {
           Enter marks, get SGPA and YGPA instantly, and keep your progress saved locally. <br /> <span className="text-gray-500">Maintained by</span>{" "}
           <a
             className="font-semibold text-primary-700 hover:text-primary-800 transition-colors duration-200"
-            href="https://github.com/SparshM8/AKTU_RESULT_CALCULATOR"
+            href="https://github.com/SparshM8/"
             target="_blank"
             rel="noopener noreferrer"
           >
