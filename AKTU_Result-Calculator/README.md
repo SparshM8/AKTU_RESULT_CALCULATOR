@@ -35,6 +35,23 @@ npm run dev
 
 Open http://localhost:5173 in your browser.
 
+## Deployment
+
+This project is ready for Vercel deployment.
+
+### Vercel
+
+1. Import the repository into Vercel.
+2. Keep the repository root as the project root.
+3. Vercel will use the root [vercel.json](vercel.json) config.
+4. Build command: `npm run build`
+5. Output directory: `AKTU_Result-Calculator/dist`
+
+### Notes
+
+- The app is a Vite SPA, so the rewrite rule must stay enabled.
+- If Vercel asks for a root directory, use the repository root, not the nested app folder.
+
 ### Production Build
 
 ```bash
@@ -68,6 +85,20 @@ vite.config.js
 3. Calculate SGPA for a semester.
 4. Calculate YGPA after both semesters are done.
 5. Refresh the page and the saved data remains available.
+
+## Screenshots
+
+Add these after capturing fresh deployment images:
+
+- **Usage view**: Show the guide section and the year selector on the landing page.
+- **Calculator view**: Show the semester table with marks entered and SGPA visible.
+- **Deployment view**: Show the live deployed site on Vercel.
+
+Suggested file names:
+
+- `screenshots/usage.png`
+- `screenshots/calculator.png`
+- `screenshots/deployment.png`
 
 ## Scripts
 

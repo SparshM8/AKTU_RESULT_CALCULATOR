@@ -9,6 +9,7 @@ import { Analytics } from "@vercel/analytics/react";
 function App() {
   const [selectedYear, setSelectedYear] = useState("1");
   const [showSaveToast, setShowSaveToast] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -24,9 +25,16 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  useEffect(() => {
+    if (guideOpen) {
+      const guideElement = document.getElementById('guide');
+      guideElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [guideOpen]);
+
   return (
     <div className="min-h-screen pt-8 px-4 sm:pt-12 sm:px-8 relative z-10">
-      <Header />
+      <Header onGuideClick={() => setGuideOpen((open) => !open)} guideOpen={guideOpen} />
 
       <main className="max-w-7xl mx-auto">
         <div id="box1" className="flex flex-col justify-center items-center mb-8 sm:mb-12 mt-8">
@@ -39,8 +47,7 @@ function App() {
           Enter marks, get SGPA and YGPA instantly, and keep your progress saved locally. <br /> <span className="text-gray-500">Maintained by</span>{" "}
           <a
             className="font-semibold text-primary-700 hover:text-primary-800 transition-colors duration-200"
-            href="https://github.com/SparshM8
-            "
+            href="https://github.com/SparshM8"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -61,6 +68,36 @@ function App() {
           </select>
         </div>
       </div>
+
+      {guideOpen && (
+        <section id="guide" className="max-w-5xl mx-auto px-4 sm:px-6 mb-12 scroll-mt-8">
+          <div className="card overflow-hidden border-primary-200 shadow-[0_12px_30px_rgba(31,41,55,0.08)]">
+            <div className="grid gap-0 lg:grid-cols-[1.15fr_0.85fr]">
+              <div className="p-6 sm:p-8 lg:p-10 border-b lg:border-b-0 lg:border-r border-gray-200">
+                <p className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-3">Quick Guide</p>
+                <h3 className="text-2xl sm:text-3xl font-display font-extrabold text-gray-900 mb-4">How to use the calculator</h3>
+                <div className="space-y-3 text-sm sm:text-base text-gray-700">
+                  <p>1. Choose your year from the dropdown above.</p>
+                  <p>2. Fill internal and external marks for each subject in the semester tables.</p>
+                  <p>3. Press <span className="font-semibold text-primary-700">Calculate SGPA</span> to compute the semester score.</p>
+                  <p>4. After both semesters are filled, use <span className="font-semibold text-accent-700">Calculate YGPA</span> for the yearly result.</p>
+                </div>
+              </div>
+
+              <aside className="bg-gray-50 p-6 sm:p-8 lg:p-10">
+                <div className="rounded-2xl border border-gray-200 bg-white p-5 sm:p-6 shadow-sm">
+                  <p className="text-xs uppercase tracking-[0.18em] text-gray-500 mb-3">Helpful Notes</p>
+                  <ul className="space-y-3 text-sm sm:text-base text-gray-700">
+                    <li className="flex gap-3"><span className="mt-1 h-2.5 w-2.5 rounded-full bg-primary-600 shrink-0"></span><span>Your entries are saved locally in the browser.</span></li>
+                    <li className="flex gap-3"><span className="mt-1 h-2.5 w-2.5 rounded-full bg-accent-600 shrink-0"></span><span>Use the Reset button if you want to clear one year's data.</span></li>
+                    <li className="flex gap-3"><span className="mt-1 h-2.5 w-2.5 rounded-full bg-gray-700 shrink-0"></span><span>The interface works on desktop and mobile without a separate app.</span></li>
+                  </ul>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </section>
+      )}
 
       {selectedYear && <div className="max-w-7xl mx-auto px-4 sm:px-6"><YearComponent year={parseInt(selectedYear)} /></div>}
 
