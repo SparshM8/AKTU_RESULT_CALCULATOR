@@ -1,0 +1,11 @@
+{
+  "installCommand": "cd AKTU_Result-Calculator && npm install",
+  "buildCommand": "cd AKTU_Result-Calculator && npm run build",
+  "outputDirectory": "AKTU_Result-Calculator/dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
