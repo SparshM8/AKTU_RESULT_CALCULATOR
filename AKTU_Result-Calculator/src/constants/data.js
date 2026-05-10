@@ -125,9 +125,117 @@ const BASE_YEARS = {
 // maintainers can replace semester subjects/credits per-branch as needed.
 export const BRANCHES_DATA = {
     CSE: BASE_YEARS,
-    ME: BASE_YEARS,
-    CE: BASE_YEARS,
-    BT: BASE_YEARS,
+    // Mechanical engineering - placeholder curriculum matching subject counts/credits from BASE_YEARS
+    ME: {
+        1: BASE_YEARS[1],
+        2: BASE_YEARS[2],
+        3: {
+            semester1: {
+                number: 5,
+                subjects: [
+                    "Applied Thermodynamics",
+                    "Mechanics of Materials",
+                    "Manufacturing Processes",
+                    "Engineering Mathematics",
+                    "Material Science",
+                    "Manufacturing Lab",
+                    "Mechanics Lab",
+                    "Workshop Practice",
+                    "Mini Project",
+                ],
+                credits: BASE_YEARS[3].semester1.credits,
+            },
+            semester2: {
+                number: 6,
+                subjects: [
+                    "Machine Design",
+                    "Fluid Mechanics",
+                    "Kinematics of Machines",
+                    "Heat Transfer",
+                    "Dynamics of Machines",
+                    "Fluid Mechanics Lab",
+                    "Machine Design Lab",
+                    "CAD Lab",
+                ],
+                credits: BASE_YEARS[3].semester2.credits,
+            }
+        },
+        4: BASE_YEARS[4]
+    },
+    // Civil engineering - placeholder curriculum
+    CE: {
+        1: BASE_YEARS[1],
+        2: BASE_YEARS[2],
+        3: {
+            semester1: {
+                number: 5,
+                subjects: [
+                    "Structural Analysis",
+                    "Building Materials",
+                    "Surveying",
+                    "Concrete Technology",
+                    "Soil Mechanics",
+                    "Survey Lab",
+                    "Materials Lab",
+                    "Drawing Lab",
+                    "Mini Project",
+                ],
+                credits: BASE_YEARS[3].semester1.credits,
+            },
+            semester2: {
+                number: 6,
+                subjects: [
+                    "Design of Steel Structures",
+                    "Hydraulics",
+                    "Geotechnical Engineering",
+                    "Environmental Engineering",
+                    "Transportation Engineering",
+                    "Hydraulics Lab",
+                    "Geotech Lab",
+                    "Env Engg Lab",
+                ],
+                credits: BASE_YEARS[3].semester2.credits,
+            }
+        },
+        4: BASE_YEARS[4]
+    },
+    // Biotechnology - placeholder curriculum
+    BT: {
+        1: BASE_YEARS[1],
+        2: BASE_YEARS[2],
+        3: {
+            semester1: {
+                number: 5,
+                subjects: [
+                    "Biochemistry",
+                    "Cell Biology",
+                    "Genetics",
+                    "Molecular Biology",
+                    "Process Calculations",
+                    "Bio Lab-I",
+                    "Cell Lab",
+                    "Genetics Lab",
+                    "Mini Project",
+                ],
+                credits: BASE_YEARS[3].semester1.credits,
+            },
+            semester2: {
+                number: 6,
+                subjects: [
+                    "Bioprocess Engineering",
+                    "Microbiology",
+                    "Biochemical Engineering",
+                    "Downstream Processing",
+                    "Instrumentation",
+                    "Bio Lab-II",
+                    "Microbiology Lab",
+                    "Process Lab",
+                ],
+                credits: BASE_YEARS[3].semester2.credits,
+            }
+        },
+        4: BASE_YEARS[4]
+    }
 };
 
 export const calculateGrade = (totalMarks) => {
