@@ -70,7 +70,21 @@ function YearComponent({ year }) {
 
     const handleInputChange = (index, type, value) => {
         if (index < 0 || index >= marks1.length) return;
-        const sanitized = value === "" ? "" : Math.max(0, Math.min(100, parseInt(value) || 0));
+        if (value === "") {
+            const newMarks = [...marks1];
+            newMarks[index] = { ...newMarks[index], [type]: "" };
+            setMarks1(newMarks);
+            return;
+        }
+
+        const subject = yearData.semester1.subjects[index] || "";
+        const isLab = String(subject).toLowerCase().includes('lab');
+
+        const parsed = parseInt(value) || 0;
+        const sanitized = type === "internal"
+            ? Math.max(0, Math.min(isLab ? 50 : 30, parsed))
+            : Math.max(0, Math.min(isLab ? 50 : 70, parsed));
+
         const newMarks = [...marks1];
         newMarks[index] = { ...newMarks[index], [type]: sanitized };
         setMarks1(newMarks);
@@ -81,7 +95,7 @@ function YearComponent({ year }) {
         let totalCredits = 0;
 
         marks1.forEach((mark, index) => {
-            const total = mark.internal + mark.theory;
+            const total = (parseInt(mark.internal) || 0) + (parseInt(mark.theory) || 0);
             const grade = calculateGrade(total);
             const credit = yearData.semester1.credits[index] || 0;
 
@@ -109,11 +123,25 @@ function YearComponent({ year }) {
 
     const handleInputChange2 = (index2, type2, value2) => {
         if (index2 < 0 || index2 >= marks2.length) return;
-        const sanitized = value2 === "" ? "" : Math.max(0, Math.min(100, parseInt(value2) || 0));
+        if (value2 === "") {
+            const newMarks2 = [...marks2];
+            newMarks2[index2] = { ...newMarks2[index2], [type2]: "" };
+            setMarks2(newMarks2);
+            return;
+        }
+
+        const subject2 = yearData.semester2.subjects[index2] || "";
+        const isLab2 = String(subject2).toLowerCase().includes('lab');
+
+        const parsed = parseInt(value2) || 0;
+        const sanitized2 = type2 === "internal"
+            ? Math.max(0, Math.min(isLab2 ? 50 : 30, parsed))
+            : Math.max(0, Math.min(isLab2 ? 50 : 70, parsed));
+
         const newMarks2 = [...marks2];
         newMarks2[index2] = {
             ...newMarks2[index2],
-            [type2]: sanitized,
+            [type2]: sanitized2,
         };
         setMarks2(newMarks2);
     };
@@ -123,7 +151,7 @@ function YearComponent({ year }) {
         let totalCredits = 0;
 
         marks2.forEach((mark2, index) => {
-            const total2 = mark2.internal + mark2.theory;
+            const total2 = (parseInt(mark2.internal) || 0) + (parseInt(mark2.theory) || 0);
             const grade2 = calculateGrade(total2);
             const credit2 = yearData.semester2.credits[index] || 0;
 
