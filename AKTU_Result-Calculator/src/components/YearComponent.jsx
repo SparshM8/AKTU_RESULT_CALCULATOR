@@ -70,20 +70,59 @@ function YearComponent({ year, branch = 'CSE' }) {
         });
     };
 
+    const parsePDF = async (file) => {
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdfjs = await import('pdfjs-dist/legacy/build/pdf');
+            const loadingTask = pdfjs.getDocument({ data: arrayBuffer });
+            const pdf = await loadingTask.promise;
+            const lines = [];
+            for (let p = 1; p <= pdf.numPages; p++) {
+                const page = await pdf.getPage(p);
+                const content = await page.getTextContent();
+                const strs = content.items.map(i => i.str);
+                // join contiguous strings into a single line approximation
+                lines.push(strs.join(' '));
+            }
+
+            // Build rows by finding subject names and numbers in lines
+            const rows = [];
+            for (const line of lines) {
+                const nums = (line.match(/\d+/g) || []).map(n => n);
+                // heuristics: if a line contains letters and numbers, consider it
+                if (/[a-zA-Z]/.test(line) && nums.length > 0) {
+                    // take first two numbers as internal and external when possible
+                    const subjectText = line.replace(/\d+/g, '').trim();
+                    rows.push({ subject: subjectText, internal: nums[0] || '', external: nums[1] || nums[0] || '' });
+                }
+            }
+
+            // Fallback: if no rows detected, return empty
+            return rows;
+        } catch (err) {
+            console.error('PDF parse failed', err);
+            return [];
+        }
+    };
+
     const handleImport = async () => {
         if (!uploadFile) return alert('Please choose a CSV or JSON marksheet file first.');
 
-        const text = await uploadFile.text();
         let rows = [];
         try {
-            if (uploadFile.name.toLowerCase().endsWith('.json') || text.trim().startsWith('[')) {
-                rows = JSON.parse(text);
+            if (uploadFile.name.toLowerCase().endsWith('.pdf')) {
+                rows = await parsePDF(uploadFile);
             } else {
-                rows = parseCSV(text);
+                const text = await uploadFile.text();
+                if (uploadFile.name.toLowerCase().endsWith('.json') || text.trim().startsWith('[')) {
+                    rows = JSON.parse(text);
+                } else {
+                    rows = parseCSV(text);
+                }
             }
         } catch (err) {
             console.error(err);
-            return alert('Failed to parse file. Ensure it is valid CSV or JSON.');
+            return alert('Failed to parse file. Ensure it is valid CSV, JSON, or PDF.');
         }
 
         // normalize rows keys
