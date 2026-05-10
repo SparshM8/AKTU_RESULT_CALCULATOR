@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import confetti from 'canvas-confetti';
 import { BRANCHES_DATA, calculateGrade } from '../constants/data';
 import SemesterTable from './SemesterTable';
+import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf';
 
 function YearComponent({ year, branch = 'CSE' }) {
     const branchData = BRANCHES_DATA[branch] || BRANCHES_DATA['CSE'];
@@ -73,8 +74,7 @@ function YearComponent({ year, branch = 'CSE' }) {
     const parsePDF = async (file) => {
         try {
             const arrayBuffer = await file.arrayBuffer();
-            const pdfjs = await import('pdfjs-dist/legacy/build/pdf');
-            const loadingTask = pdfjs.getDocument({ data: arrayBuffer });
+            const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
             const pdf = await loadingTask.promise;
             const lines = [];
             for (let p = 1; p <= pdf.numPages; p++) {
