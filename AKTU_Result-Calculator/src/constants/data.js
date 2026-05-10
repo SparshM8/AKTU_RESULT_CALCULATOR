@@ -1,4 +1,4 @@
-export const YEARS_DATA = {
+const BASE_YEARS = {
     1: {
         semester1: {
             number: 1,
@@ -119,6 +119,15 @@ export const YEARS_DATA = {
             credits: [3, 3, 10],
         }
     }
+};
+
+// Provide branch-specific mappings. By default use the same structure for other branches;
+// maintainers can replace semester subjects/credits per-branch as needed.
+export const BRANCHES_DATA = {
+    CSE: BASE_YEARS,
+    ME: BASE_YEARS,
+    CE: BASE_YEARS,
+    BT: BASE_YEARS,
 };
 
 export const calculateGrade = (totalMarks) => {

@@ -8,6 +8,7 @@ import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   const [selectedYear, setSelectedYear] = useState("1");
+  const [selectedBranch, setSelectedBranch] = useState("CSE");
   const [showSaveToast, setShowSaveToast] = useState(false);
   const [guideOpen, setGuideOpen] = useState(false);
 
@@ -56,16 +57,29 @@ function App() {
         </p>
 
         <div className="mt-8">
-          <select
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(e.target.value)}
-            className="px-6 py-3 rounded-lg font-semibold cursor-pointer border-2 border-gray-300 hover:border-primary-400 bg-white text-gray-900 shadow-sm"
-          >
-            <option value="1">1st Year</option>
-            <option value="2">2nd Year</option>
-            <option value="3">3rd Year</option>
-            <option value="4">4th Year</option>
-          </select>
+          <div className="flex gap-3 items-center justify-center">
+            <select
+              value={selectedBranch}
+              onChange={(e) => setSelectedBranch(e.target.value)}
+              className="px-4 py-2 rounded-lg font-semibold cursor-pointer border-2 border-gray-300 hover:border-primary-400 bg-white text-gray-900 shadow-sm"
+            >
+              <option value="CSE">Computer Science (CSE)</option>
+              <option value="ME">Mechanical (ME)</option>
+              <option value="CE">Civil (CE)</option>
+              <option value="BT">Biotech (BT)</option>
+            </select>
+
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+              className="px-6 py-3 rounded-lg font-semibold cursor-pointer border-2 border-gray-300 hover:border-primary-400 bg-white text-gray-900 shadow-sm"
+            >
+              <option value="1">1st Year</option>
+              <option value="2">2nd Year</option>
+              <option value="3">3rd Year</option>
+              <option value="4">4th Year</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -99,7 +113,7 @@ function App() {
         </section>
       )}
 
-      {selectedYear && <div className="max-w-7xl mx-auto px-4 sm:px-6"><YearComponent year={parseInt(selectedYear)} /></div>}
+      {selectedYear && <div className="max-w-7xl mx-auto px-4 sm:px-6"><YearComponent year={parseInt(selectedYear)} branch={selectedBranch} /></div>}
 
       <div className="text-center text-sm mt-12 pb-4">
         <p className="text-gray-700">To report issues and request features, visit the <a href="https://github.com/SparshM8/AKTU_RESULT_CALCULATOR/issues" className="text-primary-700 hover:text-primary-800 font-semibold transition-colors">Issues page</a>.</p>

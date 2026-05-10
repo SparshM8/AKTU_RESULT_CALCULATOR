@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import confetti from 'canvas-confetti';
-import { YEARS_DATA, calculateGrade } from '../constants/data';
+import { BRANCHES_DATA, calculateGrade } from '../constants/data';
 import SemesterTable from './SemesterTable';
 
-function YearComponent({ year }) {
-    const yearData = YEARS_DATA[year];
+function YearComponent({ year, branch = 'CSE' }) {
+    const branchData = BRANCHES_DATA[branch] || BRANCHES_DATA['CSE'];
+    const yearData = branchData[year];
 
     if (!yearData || !yearData.semester1 || !yearData.semester2) {
         return <div>Invalid year selected</div>;
@@ -20,8 +21,8 @@ function YearComponent({ year }) {
             yearData.semester2.subjects.length, yearData.semester2.credits.length);
     }
 
-    // LocalStorage keys per year
-    const storageKey = (field) => `sgpa_${year}_${field}`;
+    // LocalStorage keys per branch+year
+    const storageKey = (field) => `sgpa_${branch}_${year}_${field}`;
 
     // Load from localStorage or default
     const getInitial = (field, defaultValue) => {
@@ -52,14 +53,14 @@ function YearComponent({ year }) {
         setYgpa(0);
     };
 
-    // Reset state when year changes
+    // Reset state when year or branch changes
     useEffect(() => {
         setMarks1(getInitial('marks1', yearData.semester1.subjects.map(() => ({ internal: "", theory: "" }))));
         setMarks2(getInitial('marks2', yearData.semester2.subjects.map(() => ({ internal: "", theory: "" }))));
         setSgpa1(getInitial('sgpa1', 0));
         setSgpa2(getInitial('sgpa2', 0));
         setYgpa(getInitial('ygpa', 0));
-    }, [year]);
+    }, [year, branch]);
 
     // Save to localStorage on change
     useEffect(() => { localStorage.setItem(storageKey('marks1'), JSON.stringify(marks1)); }, [marks1]);
