@@ -38,6 +38,8 @@ function YearComponent({ year, branch = 'CSE' }) {
     const [sgpa1, setSgpa1] = useState(() => getInitial('sgpa1', 0));
     const [sgpa2, setSgpa2] = useState(() => getInitial('sgpa2', 0));
     const [ygpa, setYgpa] = useState(() => getInitial('ygpa', 0));
+    const [uploadFile, setUploadFile] = useState(null);
+    const [importSemester, setImportSemester] = useState(1);
 
     // Reset handler for this year
     const handleReset = () => {
@@ -51,6 +53,76 @@ function YearComponent({ year, branch = 'CSE' }) {
         setSgpa1(0);
         setSgpa2(0);
         setYgpa(0);
+    };
+
+    // --- Marks upload/import helpers ---
+    const normalize = (s) => (s || "").toString().toLowerCase().replace(/\s+/g, "");
+
+    const parseCSV = (text) => {
+        const lines = text.split(/\r?\n/).filter(l => l.trim());
+        if (lines.length === 0) return [];
+        const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+        return lines.slice(1).map(line => {
+            const parts = line.split(',');
+            const obj = {};
+            headers.forEach((h, i) => { obj[h] = (parts[i] || '').trim(); });
+            return obj;
+        });
+    };
+
+    const handleImport = async () => {
+        if (!uploadFile) return alert('Please choose a CSV or JSON marksheet file first.');
+
+        const text = await uploadFile.text();
+        let rows = [];
+        try {
+            if (uploadFile.name.toLowerCase().endsWith('.json') || text.trim().startsWith('[')) {
+                rows = JSON.parse(text);
+            } else {
+                rows = parseCSV(text);
+            }
+        } catch (err) {
+            console.error(err);
+            return alert('Failed to parse file. Ensure it is valid CSV or JSON.');
+        }
+
+        // normalize rows keys
+        rows = rows.map(r => {
+            const obj = {};
+            Object.keys(r).forEach(k => { obj[k.trim().toLowerCase()] = r[k]; });
+            return obj;
+        });
+
+        const targetSemester = importSemester === 1 ? yearData.semester1 : yearData.semester2;
+        const currentMarks = importSemester === 1 ? [...marks1] : [...marks2];
+
+        const newMarks = targetSemester.subjects.map((subject, idx) => {
+            const normSub = normalize(subject);
+            // try to find by exact match or inclusion
+            const found = rows.find(r => {
+                const possibleNames = ['subject', 'sub', 'name'];
+                for (const key of possibleNames) {
+                    if (r[key]) {
+                        const rn = normalize(r[key]);
+                        if (rn === normSub || rn.includes(normSub) || normSub.includes(rn)) return true;
+                    }
+                }
+                return false;
+            });
+
+            if (found) {
+                const internal = found.internal || found.internals || found.int || found.internal_marks || found['internal marks'] || found['internal_mark'] || found.internal_mark || '';
+                const external = found.external || found.ext || found.theory || found.external_marks || found['external marks'] || found['external_mark'] || found.external_mark || '';
+                return { internal: internal.toString(), theory: external.toString() };
+            }
+
+            // fallback: keep existing value if present
+            return currentMarks[idx] || { internal: "", theory: "" };
+        });
+
+        if (importSemester === 1) setMarks1(newMarks); else setMarks2(newMarks);
+        alert(`Imported ${rows.length} rows into Semester ${targetSemester.number}.`);
+        setUploadFile(null);
     };
 
     // Reset state when year or branch changes
@@ -205,6 +277,19 @@ function YearComponent({ year, branch = 'CSE' }) {
                     >
                         ⟲ Reset All Data
                     </button>
+                </div>
+                <div className="flex items-center justify-center gap-3 mt-4">
+                    <input
+                        type="file"
+                        accept=".csv,application/json,text/csv"
+                        onChange={(e) => setUploadFile(e.target.files && e.target.files[0])}
+                        className="text-sm"
+                    />
+                    <select value={importSemester} onChange={(e) => setImportSemester(parseInt(e.target.value))} className="px-3 py-2 rounded-md border">
+                        <option value={1}>Import to Semester {yearData.semester1.number}</option>
+                        <option value={2}>Import to Semester {yearData.semester2.number}</option>
+                    </select>
+                    <button onClick={handleImport} className="btn-primary">Import</button>
                 </div>
                 <div className="flex flex-wrap gap-6 sm:gap-12 justify-center">
                     <SemesterTable
