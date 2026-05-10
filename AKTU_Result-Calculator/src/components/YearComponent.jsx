@@ -93,8 +93,52 @@ function YearComponent({ year, branch = 'CSE' }) {
             return obj;
         });
 
-        const targetSemester = importSemester === 1 ? yearData.semester1 : yearData.semester2;
-        const currentMarks = importSemester === 1 ? [...marks1] : [...marks2];
+        // Attempt to auto-detect branch and semester from rows
+        const detect = () => {
+            const branches = Object.keys(BRANCHES_DATA || {});
+            const scores = {};
+
+            const rowSubjects = rows.map(r => normalize(r.subject || r.name || r.sub || ''));
+
+            for (const b of branches) {
+                const bd = BRANCHES_DATA[b];
+                if (!bd) continue;
+                const y = bd[year];
+                if (!y) continue;
+                const s1 = new Set(y.semester1.subjects.map(s => normalize(s)));
+                const s2 = new Set(y.semester2.subjects.map(s => normalize(s)));
+                let score = 0;
+                let s1matches = 0;
+                let s2matches = 0;
+                for (const rs of rowSubjects) {
+                    if (!rs) continue;
+                    if (s1.has(rs)) { score++; s1matches++; }
+                    if (s2.has(rs)) { score++; s2matches++; }
+                }
+                scores[b] = { score, s1matches, s2matches };
+            }
+
+            // pick best branch
+            const bestBranch = Object.keys(scores).reduce((best, cur) => {
+                if (!best) return cur;
+                return scores[cur].score > scores[best].score ? cur : best;
+            }, null);
+
+            let detectedSemester = importSemester;
+            if (bestBranch) {
+                const bd = BRANCHES_DATA[bestBranch][year];
+                if (bd) {
+                    detectedSemester = scores[bestBranch].s1matches >= scores[bestBranch].s2matches ? 1 : 2;
+                }
+            }
+
+            return { detectedBranch: bestBranch, detectedSemester };
+        };
+
+        const { detectedBranch, detectedSemester } = detect();
+
+        const targetSemester = detectedSemester === 1 ? (BRANCHES_DATA[branch] || BRANCHES_DATA['CSE'])[year].semester1 : (BRANCHES_DATA[branch] || BRANCHES_DATA['CSE'])[year].semester2;
+        const currentMarks = detectedSemester === 1 ? [...marks1] : [...marks2];
 
         const newMarks = targetSemester.subjects.map((subject, idx) => {
             const normSub = normalize(subject);
@@ -120,7 +164,16 @@ function YearComponent({ year, branch = 'CSE' }) {
             return currentMarks[idx] || { internal: "", theory: "" };
         });
 
-        if (importSemester === 1) setMarks1(newMarks); else setMarks2(newMarks);
+        if (detectedBranch && detectedBranch !== branch) {
+            // inform user but do not change parent's branch state
+            alert(`Detected branch: ${detectedBranch}. Current branch: ${branch}. To use detected branch's curriculum, change branch selection in the header.`);
+        }
+
+        if (detectedSemester !== importSemester) {
+            alert(`Detected semester ${detectedSemester} from uploaded subjects — importing into that semester.`);
+        }
+
+        if (detectedSemester === 1) setMarks1(newMarks); else setMarks2(newMarks);
         alert(`Imported ${rows.length} rows into Semester ${targetSemester.number}.`);
         setUploadFile(null);
     };
