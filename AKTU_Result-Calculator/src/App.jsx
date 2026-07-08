@@ -89,7 +89,7 @@ function App() {
                   <p className="text-xs uppercase tracking-[0.18em] text-gray-500 mb-3">Helpful Notes</p>
                   <ul className="space-y-3 text-sm sm:text-base text-gray-700">
                     <li className="flex gap-3"><span className="mt-1 h-2.5 w-2.5 rounded-full bg-primary-600 shrink-0"></span><span>Your entries are saved locally in the browser.</span></li>
-                    <li className="flex gap-3"><span className="mt-1 h-2.5 w-2.5 rounded-full bg-accent-600 shrink-0"></span><span>Use the Reset button if you want to clear one year's data.</span></li>
+                    <li className="flex gap-3"><span className="mt-1 h-2.5 w-2.5 rounded-full bg-accent-600 shrink-0"></span><span>Use the Reset button if you want to clear one year&apos;s data.</span></li>
                     <li className="flex gap-3"><span className="mt-1 h-2.5 w-2.5 rounded-full bg-gray-700 shrink-0"></span><span>The interface works on desktop and mobile without a separate app.</span></li>
                   </ul>
                 </div>

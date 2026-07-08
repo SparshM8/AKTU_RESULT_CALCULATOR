@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import confetti from 'canvas-confetti';
 import { YEARS_DATA, calculateGrade } from '../constants/data';
 import SemesterTable from './SemesterTable';
@@ -6,18 +6,17 @@ import SemesterTable from './SemesterTable';
 function YearComponent({ year }) {
     const yearData = YEARS_DATA[year];
 
-    if (!yearData || !yearData.semester1 || !yearData.semester2) {
-        return <div>Invalid year selected</div>;
-    }
+    const safeSem1 = yearData?.semester1 || { subjects: [], credits: [], number: 1 };
+    const safeSem2 = yearData?.semester2 || { subjects: [], credits: [], number: 2 };
 
     // Validate data integrity
-    if (yearData.semester1.subjects.length !== yearData.semester1.credits.length) {
-        console.error(`Semester ${yearData.semester1.number}: subjects/credits length mismatch`,
-            yearData.semester1.subjects.length, yearData.semester1.credits.length);
+    if (yearData && safeSem1.subjects.length !== safeSem1.credits.length) {
+        console.error(`Semester ${safeSem1.number}: subjects/credits length mismatch`,
+            safeSem1.subjects.length, safeSem1.credits.length);
     }
-    if (yearData.semester2.subjects.length !== yearData.semester2.credits.length) {
-        console.error(`Semester ${yearData.semester2.number}: subjects/credits length mismatch`,
-            yearData.semester2.subjects.length, yearData.semester2.credits.length);
+    if (yearData && safeSem2.subjects.length !== safeSem2.credits.length) {
+        console.error(`Semester ${safeSem2.number}: subjects/credits length mismatch`,
+            safeSem2.subjects.length, safeSem2.credits.length);
     }
 
     // LocalStorage keys per year
@@ -28,12 +27,12 @@ function YearComponent({ year }) {
         try {
             const val = localStorage.getItem(storageKey(field));
             if (val) return JSON.parse(val);
-        } catch { }
+        } catch (e) { console.error("Error parsing localStorage", e); }
         return defaultValue;
     };
 
-    const [marks1, setMarks1] = useState(() => getInitial('marks1', yearData.semester1.subjects.map(() => ({ internal: "", theory: "" }))));
-    const [marks2, setMarks2] = useState(() => getInitial('marks2', yearData.semester2.subjects.map(() => ({ internal: "", theory: "" }))));
+    const [marks1, setMarks1] = useState(() => getInitial('marks1', safeSem1.subjects.map(() => ({ internal: "", theory: "" }))));
+    const [marks2, setMarks2] = useState(() => getInitial('marks2', safeSem2.subjects.map(() => ({ internal: "", theory: "" }))));
     const [sgpa1, setSgpa1] = useState(() => getInitial('sgpa1', 0));
     const [sgpa2, setSgpa2] = useState(() => getInitial('sgpa2', 0));
     const [ygpa, setYgpa] = useState(() => getInitial('ygpa', 0));
@@ -45,8 +44,8 @@ function YearComponent({ year }) {
         localStorage.removeItem(storageKey('sgpa1'));
         localStorage.removeItem(storageKey('sgpa2'));
         localStorage.removeItem(storageKey('ygpa'));
-        setMarks1(yearData.semester1.subjects.map(() => ({ internal: "", theory: "" })));
-        setMarks2(yearData.semester2.subjects.map(() => ({ internal: "", theory: "" })));
+        setMarks1(safeSem1.subjects.map(() => ({ internal: "", theory: "" })));
+        setMarks2(safeSem2.subjects.map(() => ({ internal: "", theory: "" })));
         setSgpa1(0);
         setSgpa2(0);
         setYgpa(0);
@@ -54,18 +53,24 @@ function YearComponent({ year }) {
 
     // Reset state when year changes
     useEffect(() => {
-        setMarks1(getInitial('marks1', yearData.semester1.subjects.map(() => ({ internal: "", theory: "" }))));
-        setMarks2(getInitial('marks2', yearData.semester2.subjects.map(() => ({ internal: "", theory: "" }))));
+        setMarks1(getInitial('marks1', safeSem1.subjects.map(() => ({ internal: "", theory: "" }))));
+        setMarks2(getInitial('marks2', safeSem2.subjects.map(() => ({ internal: "", theory: "" }))));
         setSgpa1(getInitial('sgpa1', 0));
         setSgpa2(getInitial('sgpa2', 0));
         setYgpa(getInitial('ygpa', 0));
-    }, [year]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [year, safeSem1, safeSem2]);
 
     // Save to localStorage on change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { localStorage.setItem(storageKey('marks1'), JSON.stringify(marks1)); }, [marks1]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { localStorage.setItem(storageKey('marks2'), JSON.stringify(marks2)); }, [marks2]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { localStorage.setItem(storageKey('sgpa1'), JSON.stringify(sgpa1)); }, [sgpa1]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { localStorage.setItem(storageKey('sgpa2'), JSON.stringify(sgpa2)); }, [sgpa2]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { localStorage.setItem(storageKey('ygpa'), JSON.stringify(ygpa)); }, [ygpa]);
 
     const handleInputChange = (index, type, value) => {
@@ -192,6 +197,10 @@ function YearComponent({ year }) {
             setYgpa("0.00");
         }
     };
+
+    if (!yearData || !yearData.semester1 || !yearData.semester2) {
+        return <div>Invalid year selected</div>;
+    }
 
     return (
         <>
