@@ -96,6 +96,13 @@ export default function Calculator() {
     const removeSemester = (idx) =>
         updateState(() => ({ semesters: state.semesters.filter((_, i) => i !== idx) }));
 
+    const handleBulkPaste = (semIdx, mapped) => {
+        const sem = state.semesters[semIdx];
+        const marks = sem.courses.map((c, i) => mapped[i] || { internal: "", external: "" });
+        setSemester(semIdx, { ...sem, marks, calculated: false, sgpa: 0 });
+        notify(`Marks pasted for Semester ${semIdx + 1} — review the grades, then calculate SGPA.`);
+    };
+
     const handleMarkChange = (semIdx, courseIdx, field, value) => {
         const sem = state.semesters[semIdx];
         if (field === "__name__") {
@@ -348,6 +355,7 @@ export default function Calculator() {
                                 handleMarkChange={(...args) => handleMarkChange(idx, ...args)}
                                 handleRemoveCourse={(courseIdx) => handleRemoveCourse(idx, courseIdx)}
                                 calculateSGPA={() => calculateSGPA(idx)}
+                                onBulkPaste={(mapped) => handleBulkPaste(idx, mapped)}
                                 sgpa={sem.sgpa || 0}
                             />
                         </div>

@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { COURSE_TYPES, getGrade, checkPass, marksNeededToThresholds } from "../constants/aktu";
+import { extractNumbers, mapNumbersToMarks, serializeMarks } from "../constants/paste";
 
 export default function UniversalSemesterTable({
     semesterNumber,
@@ -8,7 +10,12 @@ export default function UniversalSemesterTable({
     handleRemoveCourse,
     calculateSGPA,
     sgpa,
+    onBulkPaste,
 }) {
+    const [pasteOpen, setPasteOpen] = useState(false);
+    const [pasteText, setPasteText] = useState("");
+    const [copied, setCopied] = useState(false);
+
     const totalCredits = courses.reduce((sum, c) => sum + (Number(c.credits) || 0), 0);
 
     const totalObtained = marks.reduce(
@@ -189,7 +196,7 @@ export default function UniversalSemesterTable({
                         aria-label={`Course ${index + 1} name`}
                         value={course.name}
                         onChange={(e) => handleMarkChange(index, "__name__", e.target.value)}
-                        className="w-full bg-transparent border-2 border-transparent hover:border-gray-300 focus:border-primary-500 px-1 py-1 font-medium text-gray-800"
+                        className="w-full min-w-0 bg-transparent border-2 border-transparent hover:border-gray-300 focus:border-primary-500 px-1 py-1 font-medium text-gray-800 text-sm"
                     />
                     <button
                         type="button"
@@ -314,6 +321,78 @@ export default function UniversalSemesterTable({
                 </span>
                 Semester {semesterNumber}
             </h2>
+
+            {/* Quick actions: bulk paste + copy */}
+            <div className="flex flex-wrap gap-2 mb-4">
+                <button
+                    type="button"
+                    onClick={() => setPasteOpen((v) => !v)}
+                    className={`text-xs sm:text-sm font-semibold rounded-lg px-3 py-1.5 border-2 transition-colors ${
+                        pasteOpen
+                            ? "bg-primary-600 border-primary-700 text-white"
+                            : "bg-white border-primary-200 text-primary-700 hover:bg-primary-50"
+                    }`}
+                    aria-expanded={pasteOpen}
+                    aria-controls={`paste-box-${semesterNumber}`}
+                >
+                    {pasteOpen ? "✕ Close paste" : "⌨ Paste marks"}
+                </button>
+                <button
+                    type="button"
+                    onClick={async () => {
+                        try {
+                            await navigator.clipboard.writeText(serializeMarks(courses, marks));
+                            setCopied(true);
+                            setTimeout(() => setCopied(false), 2000);
+                        } catch (e) {
+                            /* clipboard unavailable */
+                        }
+                    }}
+                    className="text-xs sm:text-sm font-semibold rounded-lg px-3 py-1.5 border-2 border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                    {copied ? "✓ Copied" : "📋 Copy marks"}
+                </button>
+            </div>
+
+            {pasteOpen && (
+                <div
+                    id={`paste-box-${semesterNumber}`}
+                    className="bg-primary-50 border-2 border-primary-200 rounded-xl p-4 mb-6"
+                >
+                    <p className="text-xs sm:text-sm text-gray-700 font-semibold mb-2">
+                        Paste this semester&apos;s marks in one step
+                    </p>
+                    <p className="text-[11px] sm:text-xs text-gray-500 mb-3">
+                        Enter numbers in course order, separated by space, comma or tab. Pairs like
+                        &quot;25 65&quot; are read as internal/external; a single number is split by course
+                        type (theory 30/70, lab 50/50). Slash pairs like &quot;25/30 65/70&quot; also work.
+                        Extra values are ignored; only as many courses as exist are filled.
+                    </p>
+                    <textarea
+                        value={pasteText}
+                        onChange={(e) => setPasteText(e.target.value)}
+                        placeholder={"e.g.  " + courses.slice(0, 3).map((c) => (COURSE_TYPES[c.type] || COURSE_TYPES.theory).internalMax).join("  ")}
+                        rows={3}
+                        className="w-full text-sm border-2 border-primary-200 rounded-lg px-3 py-2 bg-white focus:border-primary-500 outline-none resize-y"
+                    />
+                    <div className="flex justify-end mt-3">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                const numbers = extractNumbers(pasteText);
+                                if (numbers.length === 0) return;
+                                const mapped = mapNumbersToMarks(numbers, courses);
+                                if (onBulkPaste) onBulkPaste(mapped);
+                                setPasteText("");
+                                setPasteOpen(false);
+                            }}
+                            className="btn-primary text-sm px-4 py-1.5"
+                        >
+                            {"Fill semester (" + extractNumbers(pasteText).length + " number" + (extractNumbers(pasteText).length === 1 ? "" : "s") + ")"}
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Desktop: horizontal table */}
             <div className="hidden sm:block overflow-x-auto mb-6">

@@ -144,6 +144,7 @@ tbody td {
   border-radius: 0.85rem;
   padding: 0.85rem;
   box-shadow: 4px 4px 0 #1118270f;
+  min-width: 0;
 }
 
 .course-card-label {

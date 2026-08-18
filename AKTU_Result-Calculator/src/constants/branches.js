@@ -166,8 +166,8 @@ const BRANCH_SEMESTERS = {
 };
 
 /**
- * Build 8 pre-filled semesters for a branch (or blank semesters for custom).
- * Returns [{ courses, sgpa: 0, calculated: false }] × 8.
+ * Build 8 pre-filled semesters for a branch (or a blank starter semester for
+ * custom mode). Returns [{ courses, sgpa: 0, calculated: false }] × 8.
  */
 export function buildBranchSemesters(branchId) {
     let all = [];
