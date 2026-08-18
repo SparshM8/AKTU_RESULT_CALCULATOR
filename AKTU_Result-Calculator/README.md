@@ -1,119 +1,52 @@
-# AKTU SGPA Calculator
+# AKTU Result Calculator (Universal)
 
-A lightweight SGPA and YGPA calculator for AKTU B.Tech students. The interface now uses a clean editorial look with warm paper tones, strong typography, and clear hierarchy.
+A comprehensive, ordinance-aligned SGPA, YGPA, and CGPA calculator for every AKTU (Dr. A.P.J. Abdul Kalam Technical University) B.Tech student.
 
 ## Features
 
-- Instant SGPA and YGPA calculation
-- Auto-save in browser local storage
-- Support for 1st, 2nd, 3rd, and 4th year
-- Responsive layout for desktop and mobile
-- Accessible form controls and semantic sections
-- Confetti celebration for strong results
+- **Universal Curriculum**: Add your own subjects, credits, and course types (Theory, Lab, Project).
+- **Official Ordinance Grading**: Implements the AKTU 10-point absolute grading scale (O, A+, A, B+, B, C, P, F).
+- **Automatic Pass Verification**: Checks both external minimums (21/70 for theory, 25/50 for labs) and total aggregate (40/100) per subject.
+- **Yearly & Cumulative Metrics**: Calculates SGPA per semester, YGPA per academic year, and overall CGPA.
+- **Batch-Specific Percentage**: Supports both pre-2018 (`CGPA × 10`) and 2018-19+ (`(CGPA − 0.75) × 10`) conversion formulas.
+- **Smart Insights**: Shows "marks needed" to reach the next grade or pass boundary.
+- **Privacy First**: All data is stored locally in your browser (LocalStorage).
 
-## Visual Style
+## AKTU Grading Scheme (Built-in)
 
-- **Typography**: Fraunces for headings, Space Grotesk for UI text
-- **Palette**: Warm orange and cyan accents on a neutral paper background
-- **Cards**: Clean bordered panels with a subtle shadow
-- **Controls**: Simple high-contrast inputs and buttons with minimal decoration
+| Percentage | Grade | Point | Description |
+|------------|-------|-------|-------------|
+| ≥ 90%      | O     | 10    | Outstanding |
+| 80 – 89%   | A+    | 9     | Excellent   |
+| 70 – 79%   | A     | 8     | Very Good   |
+| 60 – 69%   | B+    | 7     | Good        |
+| 50 – 59%   | B     | 6     | Above Avg   |
+| 45 – 49%   | C     | 5     | Average     |
+| 40 – 44%   | P     | 4     | Pass        |
+| < 40%      | F     | 0     | Fail        |
 
-## Quick Start
+## Technical Stack
 
-### Requirements
+- **Framework**: React 18 + Vite
+- **Styling**: Tailwind CSS
+- **Animations**: Canvas Confetti
+- **Deployment**: Vercel (Analytics enabled)
 
-- Node.js 18 or newer
-- npm
-
-### Development
+## Development
 
 ```bash
-cd AKTU_Result-Calculator
+# Install dependencies
 npm install
+
+# Start dev server
 npm run dev
-```
 
-Open http://localhost:5173 in your browser.
-
-## Deployment
-
-This project is ready for Vercel deployment.
-
-### Vercel
-
-1. Import the repository into Vercel.
-2. Keep the repository root as the project root.
-3. Vercel will use the root [vercel.json](vercel.json) config.
-4. Build command: `npm run build`
-5. Output directory: `AKTU_Result-Calculator/dist`
-
-### Notes
-
-- The app is a Vite SPA, so the rewrite rule must stay enabled.
-- If Vercel asks for a root directory, use the repository root, not the nested app folder.
-
-### Production Build
-
-```bash
+# Build for production
 npm run build
-npm run preview
 ```
 
-## Project Structure
+## Disclaimer
 
-```
-src/
-├── App.jsx
-├── App.css
-├── index.css
-├── main.jsx
-└── components/
-    ├── Header.jsx
-    ├── Footer.jsx
-    ├── YearComponent.jsx
-    ├── SemesterTable.jsx
-    └── GithubStar.jsx
+This is an unofficial tool based on the AKTU B.Tech Ordinance (2018-19, revised). Final marks and grades are governed by the university's official result declaration.
 
-tailwind.config.js
-vite.config.js
-```
-
-## How It Works
-
-1. Select the year.
-2. Enter internal and external marks for each subject.
-3. Calculate SGPA for a semester.
-4. Calculate YGPA after both semesters are done.
-5. Refresh the page and the saved data remains available.
-
-## Screenshots
-
-Add these after capturing fresh deployment images:
-
-- **Usage view**: Show the guide section and the year selector on the landing page.
-- **Calculator view**: Show the semester table with marks entered and SGPA visible.
-- **Deployment view**: Show the live deployed site on Vercel.
-
-Suggested file names:
-
-- `screenshots/usage.png`
-- `screenshots/calculator.png`
-- `screenshots/deployment.png`
-
-## Scripts
-
-```bash
-npm run dev
-npm run build
-npm run preview
-npm run lint
-```
-
-## Links
-
-- GitHub: [SparshM8/AKTU_RESULT_CALCULATOR](https://github.com/SparshM8/AKTU_RESULT_CALCULATOR)
-- Issues: [Report bugs](https://github.com/SparshM8/AKTU_RESULT_CALCULATOR/issues)
-
-## License
-
-MIT. Built for AKTU students.
+Built with ❤️ by [SparshM8](https://github.com/SparshM8)

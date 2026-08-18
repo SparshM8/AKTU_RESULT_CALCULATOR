@@ -16,7 +16,7 @@ export default function Header({ onGuideClick, guideOpen }) {
               </div>
               <div>
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900">AKTU Result Calculator</h1>
-                <p className="text-xs sm:text-sm text-gray-600 font-medium">Built for fast SGPA and YGPA checks</p>
+                <p className="text-xs sm:text-sm text-gray-600 font-medium">SGPA · YGPA · CGPA for every AKTU student</p>
               </div>
             </div>
             <nav className="text-sm text-gray-700 hidden sm:flex items-center gap-5">
